@@ -1,4 +1,5 @@
 use super::Action;
+use crate::cmd::new::NewCmd;
 use crate::core::dir::get_app_dir;
 use crate::core::shell::run_command;
 use anyhow::{Context, Result};
@@ -10,15 +11,11 @@ use url::Url;
 const DEFAULT_REPO: &str = "https://github.com/hocus-dev/templates";
 const DEFAULT_SUBDIR: &str = "base";
 
-pub struct NewAction<'a> {
-    pub project_name: &'a str,
-}
-
-impl Action for NewAction<'_> {
+impl Action for NewCmd {
     fn run(&self) -> Result<()> {
         let app_dir = get_app_dir()?;
-        let project_dir = app_dir.join(self.project_name);
-        let tmp_dir = app_dir.join(format!("tmp-{}", self.project_name));
+        let project_dir = app_dir.join(&self.name);
+        let tmp_dir = app_dir.join(format!("tmp-{}", &self.name));
 
         let result = setup_project(&project_dir, &tmp_dir, DEFAULT_REPO, DEFAULT_SUBDIR);
         remove_dir_all(tmp_dir).unwrap_or(());

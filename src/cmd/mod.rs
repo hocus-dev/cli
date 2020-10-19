@@ -1,6 +1,19 @@
-pub mod handler;
-pub mod subcmd;
+use clap::Clap;
 
-// Reexport modules
-pub use self::handler::Handler;
-pub use self::subcmd::Subcmd;
+pub mod init;
+pub mod new;
+
+#[derive(Clap)]
+#[clap(version = crate_version!(), author = crate_authors!())]
+pub struct Root {
+    #[clap(subcommand)]
+    pub subcmd: SubCommand,
+}
+
+#[derive(Clap)]
+pub enum SubCommand {
+    /// Initializes hocus on this machine
+    Init(init::InitCmd),
+    /// Initializes a new project
+    New(new::NewCmd),
+}

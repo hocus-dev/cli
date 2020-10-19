@@ -6,11 +6,12 @@ mod cmd;
 mod core;
 
 use crate::action::invoke_action;
-use crate::cmd::Handler;
+use crate::cmd::Root;
+use clap::Clap;
 
 fn main() {
-    let cmd_handler = Handler::parse();
-    if let Err(err) = invoke_action(cmd_handler) {
+    let root = Root::parse();
+    if let Err(err) = invoke_action(root) {
         eprintln!("Error: {:?}", err);
         std::process::exit(1);
     }

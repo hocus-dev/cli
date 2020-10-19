@@ -7,6 +7,7 @@ use std::fs::{create_dir, remove_dir_all, rename};
 use std::path::Path;
 use std::process::Command;
 use url::Url;
+use uuid::Uuid;
 
 const DEFAULT_REPO: &str = "https://github.com/hocus-dev/templates";
 const DEFAULT_SUBDIR: &str = "base";
@@ -15,7 +16,7 @@ impl Action for NewCmd {
     fn run(&self) -> Result<()> {
         let app_dir = get_app_dir()?;
         let project_dir = app_dir.join(&self.name);
-        let tmp_dir = app_dir.join(format!("tmp-{}", &self.name));
+        let tmp_dir = app_dir.join(Uuid::new_v4().to_string());
 
         let result = setup_project(&project_dir, &tmp_dir, DEFAULT_REPO, DEFAULT_SUBDIR);
         remove_dir_all(tmp_dir).unwrap_or(());

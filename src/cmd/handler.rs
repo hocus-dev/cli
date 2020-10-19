@@ -1,4 +1,4 @@
-use super::subcmd::CmdInit;
+use super::subcmd::{CmdInit, CmdNew};
 use clap::{App, ArgMatches};
 
 /// CLI argument handler.
@@ -13,6 +13,7 @@ impl<'a: 'b, 'b> Handler<'a> {
             .version(crate_version!())
             .author(crate_authors!())
             .subcommand(CmdInit::build())
+            .subcommand(CmdNew::build())
     }
 
     /// Parse CLI arguments.

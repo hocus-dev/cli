@@ -1,7 +1,7 @@
 use super::Subcmd;
 use clap::{App, SubCommand};
 
-/// The new command definition.
+/// The init command definition.
 pub struct CmdInit;
 
 impl CmdInit {

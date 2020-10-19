@@ -17,6 +17,10 @@ pub fn invoke_action(handler: Handler) -> Result<()> {
 fn subcmd_to_action(subcmd: Subcmd, _handler: Handler) -> Result<()> {
     match subcmd {
         Subcmd::Init => (init::InitAction {}).run(),
+        Subcmd::New => (new::NewAction {
+            project_name: "somedefault",
+        })
+        .run(),
     }
 }
 

@@ -17,6 +17,6 @@ pub enum SubCommand {
     Init(init::InitCmd),
     /// Initializes a new project
     New(new::NewCmd),
-    /// Edits a project
+    /// Opens a project for editing
     Edit(edit::EditCmd),
 }

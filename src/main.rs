@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate clap;
+extern crate serde;
 
 mod action;
 mod cmd;

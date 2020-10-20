@@ -1,5 +1,6 @@
 use clap::Clap;
 
+pub mod edit;
 pub mod init;
 pub mod new;
 
@@ -16,4 +17,6 @@ pub enum SubCommand {
     Init(init::InitCmd),
     /// Initializes a new project
     New(new::NewCmd),
+    /// Edits a project
+    Edit(edit::EditCmd),
 }

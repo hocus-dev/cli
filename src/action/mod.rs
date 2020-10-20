@@ -1,6 +1,7 @@
 use crate::cmd::{Root, SubCommand};
 use anyhow::Result;
 
+mod edit;
 mod init;
 mod new;
 
@@ -12,5 +13,6 @@ pub fn invoke_action(root: Root) -> Result<()> {
     match root.subcmd {
         SubCommand::Init(args) => args.run(),
         SubCommand::New(args) => args.run(),
+        SubCommand::Edit(args) => args.run(),
     }
 }

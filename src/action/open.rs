@@ -2,7 +2,7 @@ use super::Action;
 use crate::cmd::open::OpenCmd;
 use crate::core::config::ProjectConfig;
 use crate::core::dir::get_app_dir;
-use crate::core::shell::run_command;
+use crate::core::shell::{run_command, run_command_with_stream_inheritance};
 use crate::core::state::ProjectState;
 use anyhow::Result;
 use std::process::Command;
@@ -34,15 +34,16 @@ impl Action for OpenCmd {
         let mut project_state = ProjectState::open(&project_dir)?;
         if !project_state.is_init {
             println!("Running the init.sh script...");
-            run_command(
+            run_command_with_stream_inheritance(
                 Command::new("docker")
                     .arg("exec")
-                    .arg("-i") // if the script fails, exec will fail too
+                    .arg("-it")
                     .arg(&container_name)
                     .arg("/bin/bash")
                     .arg("-c")
+                    .arg("-e")
                     .arg(format!(
-                        "cd {workdir} && chmod +x {init_script} && {init_script}",
+                        "cd {workdir} && /bin/bash -e {init_script}",
                         workdir = project_config.script_workdirs.init,
                         init_script = project_config.script_paths.init,
                     )),

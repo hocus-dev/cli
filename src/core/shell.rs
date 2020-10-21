@@ -12,3 +12,11 @@ pub fn run_command(cmd: &mut Command) -> Result<()> {
     }
     Ok(())
 }
+
+pub fn run_command_with_stream_inheritance(cmd: &mut Command) -> Result<()> {
+    if cmd.status()?.success() {
+        Ok(())
+    } else {
+        Err(anyhow!("failed to execute a shell command"))
+    }
+}

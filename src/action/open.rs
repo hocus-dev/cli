@@ -23,11 +23,28 @@ impl Action for OpenCmd {
                 .arg("-d"),
         )?;
 
-        println!("Opening the project in VSCode...");
-        let container_json = format!(
-            "{{\"containerName\":\"/hocus_{project}_{service}_1\"}}",
+        let container_name = format!(
+            "hocus_{project}_{service}_1",
             project = &self.name,
             service = project_config.mount_service
+        );
+
+        run_command(
+            Command::new("docker")
+                .current_dir(&project_dir)
+                .arg("cp")
+                .arg("vscode-settings.json")
+                .arg(format!(
+                    "{container_name}:{path}",
+                    container_name = &container_name,
+                    path = "/home/hocus/.vscode-server/data/Machine/settings.json"
+                )),
+        )?;
+
+        println!("Opening the project in VSCode...");
+        let container_json = format!(
+            "{{\"containerName\":\"/{container_name}\"}}",
+            container_name = &container_name,
         );
         let uri = format!(
             "vscode-remote://attached-container+{container}{dir}",

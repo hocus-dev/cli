@@ -1,8 +1,9 @@
 use super::Action;
 use crate::cmd::open::OpenCmd;
-use crate::core::config::read_project_config;
+use crate::core::config::ProjectConfig;
 use crate::core::dir::get_app_dir;
 use crate::core::shell::run_command;
+use crate::core::state::ProjectState;
 use anyhow::Result;
 use std::process::Command;
 
@@ -11,7 +12,7 @@ impl Action for OpenCmd {
         let hocus_dir = get_app_dir()?;
         let project_dir = hocus_dir.join(&self.name);
 
-        let project_config = read_project_config(&project_dir)?;
+        let project_config = ProjectConfig::open(&project_dir)?;
 
         println!("Starting the Docker environment...");
         run_command(
@@ -29,6 +30,26 @@ impl Action for OpenCmd {
             project = &self.name,
             service = project_config.mount_service
         );
+
+        let mut project_state = ProjectState::open(&project_dir)?;
+        if !project_state.is_init {
+            println!("Running the init.sh script...");
+            run_command(
+                Command::new("docker")
+                    .arg("exec")
+                    .arg("-i") // if the script fails, exec will fail too
+                    .arg(&container_name)
+                    .arg("/bin/bash")
+                    .arg("-c")
+                    .arg(format!(
+                        "cd {workdir} && chmod +x {init_script} && {init_script}",
+                        workdir = project_config.script_workdirs.init,
+                        init_script = project_config.script_paths.init,
+                    )),
+            )?;
+            project_state.is_init = true;
+            project_state.save(&project_dir)?;
+        }
 
         println!("Opening the project in VSCode...");
         let container_json = format!(

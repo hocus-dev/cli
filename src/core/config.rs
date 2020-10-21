@@ -8,6 +8,7 @@ pub struct ProjectConfig {
     pub mount_service: String,
     pub mount_dir: String,
     pub script_workdirs: ScriptWorkdirs,
+    pub script_paths: ScriptWorkdirs,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -16,22 +17,28 @@ pub struct ScriptWorkdirs {
     pub shell: String,
 }
 
-pub fn read_project_config(project_dir: &Path) -> Result<ProjectConfig> {
-    let possible_names = ["hocus.yml", "hocus.yaml"];
-    let config_path = {
-        let mut maybe_path = None;
-        for name in &possible_names {
-            let path = project_dir.join(name);
-            if path.exists() {
-                maybe_path = Some(path);
-                break;
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct ScriptPaths {
+    pub init: String,
+    pub shell: String,
+}
+
+impl ProjectConfig {
+    pub fn open(project_dir: &Path) -> Result<ProjectConfig> {
+        let possible_names = ["hocus.yml", "hocus.yaml"];
+        let config_path = {
+            let mut maybe_path = None;
+            for name in &possible_names {
+                let path = project_dir.join(name);
+                if path.exists() {
+                    maybe_path = Some(path);
+                    break;
+                }
             }
+            maybe_path
         }
-        maybe_path
+        .ok_or(anyhow!("project config file does not exist"))?;
+        let config_str = fs::read_to_string(config_path)?;
+        serde_yaml::from_str(&config_str).context("failed to parse the project config file")
     }
-    .ok_or(anyhow!("project config file does not exist"))?;
-
-    let config_str = fs::read_to_string(config_path)?;
-
-    serde_yaml::from_str(&config_str).context("failed to parse the project config file")
 }

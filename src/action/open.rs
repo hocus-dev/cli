@@ -20,6 +20,7 @@ impl Action for OpenCmd {
                 .arg("-p")
                 .arg(format!("hocus_{}", &self.name))
                 .arg("up")
+                .arg("--build")
                 .arg("-d"),
         )?;
 
@@ -28,18 +29,6 @@ impl Action for OpenCmd {
             project = &self.name,
             service = project_config.mount_service
         );
-
-        run_command(
-            Command::new("docker")
-                .current_dir(&project_dir)
-                .arg("cp")
-                .arg("vscode-settings.json")
-                .arg(format!(
-                    "{container_name}:{path}",
-                    container_name = &container_name,
-                    path = "/home/hocus/.vscode-server/data/Machine/settings.json"
-                )),
-        )?;
 
         println!("Opening the project in VSCode...");
         let container_json = format!(

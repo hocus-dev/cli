@@ -5,6 +5,7 @@ use crate::core::dir::get_app_dir;
 use crate::core::shell::{run_command, run_command_with_stream_inheritance};
 use crate::core::state::ProjectState;
 use anyhow::Result;
+use std::fs;
 use std::process::Command;
 
 impl Action for OpenCmd {
@@ -33,15 +34,18 @@ impl Action for OpenCmd {
 
         let mut project_state = ProjectState::open(&project_dir)?;
         if !project_state.is_init {
+            println!("Creating the .env file using template.env...");
+            fs::copy(project_dir.join("template.env"), project_dir.join(".env"))?;
+
             println!("Running the init.sh script...");
             run_command_with_stream_inheritance(
                 Command::new("docker")
                     .arg("exec")
-                    .arg("-it")
+                    .arg("-it") // keep stdin open, allow user interaction
                     .arg(&container_name)
                     .arg("/bin/bash")
                     .arg("-c")
-                    .arg("-e")
+                    .arg("-e") // exit on error
                     .arg(format!(
                         "cd {workdir} && /bin/bash -e {init_script}",
                         workdir = project_config.script_workdirs.init,
@@ -57,6 +61,8 @@ impl Action for OpenCmd {
             "{{\"containerName\":\"/{container_name}\"}}",
             container_name = &container_name,
         );
+        // URI format taken from:
+        // https://github.com/microsoft/vscode-remote-release/issues/2133
         let uri = format!(
             "vscode-remote://attached-container+{container}{dir}",
             container = hex::encode(container_json),

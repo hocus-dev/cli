@@ -4,7 +4,6 @@ use anyhow::Result;
 mod close;
 mod edit;
 mod get;
-mod init;
 mod open;
 
 trait Action {
@@ -13,7 +12,6 @@ trait Action {
 
 pub fn invoke_action(root: Root) -> Result<()> {
     match root.subcmd {
-        SubCommand::Init(args) => args.run(),
         SubCommand::Edit(args) => args.run(),
         SubCommand::Open(args) => args.run(),
         SubCommand::Close(args) => args.run(),

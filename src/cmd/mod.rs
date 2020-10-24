@@ -3,7 +3,6 @@ use clap::Clap;
 pub mod close;
 pub mod edit;
 pub mod get;
-pub mod init;
 pub mod open;
 
 #[derive(Clap)]
@@ -15,8 +14,6 @@ pub struct Root {
 
 #[derive(Clap)]
 pub enum SubCommand {
-    /// Initializes hocus on this machine
-    Init(init::InitCmd),
     /// Opens a project for editing in VSCode
     Edit(edit::EditCmd),
     /// Brings up the Docker environment associated with a project and opens VSCode

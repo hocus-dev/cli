@@ -4,7 +4,6 @@ pub mod close;
 pub mod edit;
 pub mod get;
 pub mod init;
-pub mod new;
 pub mod open;
 
 #[derive(Clap)]
@@ -18,8 +17,6 @@ pub struct Root {
 pub enum SubCommand {
     /// Initializes hocus on this machine
     Init(init::InitCmd),
-    /// Initializes a new project
-    New(new::NewCmd),
     /// Opens a project for editing
     Edit(edit::EditCmd),
     /// Opens a project

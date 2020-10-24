@@ -17,12 +17,12 @@ pub struct Root {
 pub enum SubCommand {
     /// Initializes hocus on this machine
     Init(init::InitCmd),
-    /// Opens a project for editing
+    /// Opens a project for editing in VSCode
     Edit(edit::EditCmd),
-    /// Opens a project
+    /// Brings up the Docker environment associated with a project and opens VSCode
     Open(open::OpenCmd),
-    /// Closes a project
+    /// Brings down the Docker environment associated with a project
     Close(close::CloseCmd),
-    /// Downloads a hocus environment
+    /// Downloads a project
     Get(get::GetCmd),
 }

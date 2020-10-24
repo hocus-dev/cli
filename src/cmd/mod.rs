@@ -2,6 +2,7 @@ use clap::Clap;
 
 pub mod close;
 pub mod edit;
+pub mod get;
 pub mod init;
 pub mod new;
 pub mod open;
@@ -25,4 +26,6 @@ pub enum SubCommand {
     Open(open::OpenCmd),
     /// Closes a project
     Close(close::CloseCmd),
+    /// Downloads a hocus environment
+    Get(get::GetCmd),
 }

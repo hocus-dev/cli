@@ -3,6 +3,7 @@ use anyhow::Result;
 
 mod close;
 mod edit;
+mod get;
 mod init;
 mod new;
 mod open;
@@ -18,5 +19,6 @@ pub fn invoke_action(root: Root) -> Result<()> {
         SubCommand::Edit(args) => args.run(),
         SubCommand::Open(args) => args.run(),
         SubCommand::Close(args) => args.run(),
+        SubCommand::Get(args) => args.run(),
     }
 }

@@ -32,8 +32,6 @@ jobs:
         with:
           command: build
           args: --release
-          args: --target
-          args: x86_64-unknown-linux-gnu
       - uses: actions/create-release@v1
         id: create_release
         env:
@@ -65,8 +63,6 @@ jobs:
         with:
           command: build
           args: --release
-          args: --target
-          args: x86_64-apple-darwin
       - uses: actions/create-release@v1
         id: create_release
         env:

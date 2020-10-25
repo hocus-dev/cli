@@ -1,14 +1,8 @@
 name: linux test and deploy
 
-on:
-  push:
-    branches:
-      - master
-
 jobs:
   test:
-    name: Test Suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -19,8 +13,37 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
-
   deploy:
     runs-on: ubuntu-18.04
+    needs: test
+    on:
+      push:
+        tags:
+          - v*
     steps:
-      - run: echo "Not implemented yet!"
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build --release
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./target/release/hocus
+          asset_name: hocus
+          asset_content_type: application/octet-stream

@@ -1,5 +1,10 @@
 name: linux test and deploy
 
+on:
+  push:
+    tags:
+      - v*
+
 jobs:
   test:
     runs-on: ubuntu-18.04
@@ -16,10 +21,6 @@ jobs:
   deploy:
     runs-on: ubuntu-18.04
     needs: test
-    on:
-      push:
-        tags:
-          - v*
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1

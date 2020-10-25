@@ -1,4 +1,4 @@
-name: linux test and deploy
+name: test and release
 
 on:
   push:

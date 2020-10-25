@@ -18,7 +18,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
-  deploy:
+  release_linux:
     runs-on: ubuntu-18.04
     needs: test
     steps:
@@ -50,4 +50,37 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./target/release/hocus
           asset_name: hocus-linux-x86_64-gnu
+          asset_content_type: application/octet-stream
+  release_macos:
+    runs-on: macos-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+          args: --target
+          args: x86_64-apple-darwin
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./target/release/hocus
+          asset_name: hocus-macos-x86_64
           asset_content_type: application/octet-stream

@@ -2,7 +2,7 @@ use super::Action;
 use crate::cmd::open::OpenCmd;
 use crate::core::config::ProjectConfig;
 use crate::core::dir::get_app_dir;
-use crate::core::shell::{run_command, run_command_with_stream_inheritance};
+use crate::core::shell::run_command;
 use crate::core::state::ProjectState;
 use anyhow::Result;
 use std::fs;
@@ -38,7 +38,7 @@ impl Action for OpenCmd {
             fs::copy(project_dir.join("template.env"), project_dir.join(".env"))?;
 
             println!("Running the init.sh script...");
-            run_command_with_stream_inheritance(
+            run_command(
                 Command::new("docker")
                     .arg("exec")
                     .arg("-it") // keep stdin open, allow user interaction

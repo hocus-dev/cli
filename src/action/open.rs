@@ -2,7 +2,7 @@ use super::Action;
 use crate::cmd::open::OpenCmd;
 use crate::core::config::ProjectConfig;
 use crate::core::dir::get_app_dir;
-use crate::core::shell::run_command;
+use crate::core::shell::{code_command, run_command};
 use crate::core::state::ProjectState;
 use anyhow::Result;
 use std::fs;
@@ -68,7 +68,7 @@ impl Action for OpenCmd {
             container = hex::encode(container_json),
             dir = project_config.mount_dir,
         );
-        run_command(Command::new("code").arg("--folder-uri").arg(uri))?;
+        run_command(code_command().arg("--folder-uri").arg(uri))?;
 
         Ok(())
     }

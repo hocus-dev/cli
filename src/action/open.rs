@@ -1,7 +1,7 @@
 use super::Action;
 use crate::cmd::open::OpenCmd;
 use crate::core::config::ProjectConfig;
-use crate::core::dir::get_app_dir;
+use crate::core::dir::{get_generated_dir, get_project_dir};
 use crate::core::shell::{code_command, run_command};
 use crate::core::state::ProjectState;
 use anyhow::Result;
@@ -10,8 +10,8 @@ use std::process::Command;
 
 impl Action for OpenCmd {
     fn run(&self) -> Result<()> {
-        let hocus_dir = get_app_dir()?;
-        let project_dir = hocus_dir.join(&self.name);
+        let project_dir = get_project_dir(&self.name)?;
+        let generated_dir = get_generated_dir(&project_dir);
 
         let project_config = ProjectConfig::open(&project_dir)?;
 
@@ -32,10 +32,10 @@ impl Action for OpenCmd {
             service = project_config.mount_service
         );
 
-        let mut project_state = ProjectState::open(&project_dir)?;
+        let mut project_state = ProjectState::open(&generated_dir)?;
         if !project_state.is_init {
             println!("Creating the .env file using template.env...");
-            fs::copy(project_dir.join("template.env"), project_dir.join(".env"))?;
+            fs::copy(project_dir.join("template.env"), generated_dir.join(".env"))?;
 
             println!("Running the init.sh script...");
             run_command(
@@ -53,7 +53,7 @@ impl Action for OpenCmd {
                     )),
             )?;
             project_state.is_init = true;
-            project_state.save(&project_dir)?;
+            project_state.save(&generated_dir)?;
         }
 
         println!("Opening the project in VSCode...");

@@ -2,6 +2,7 @@ use super::Action;
 use crate::cmd::open::OpenCmd;
 use crate::core::config::ProjectConfig;
 use crate::core::dir::{get_generated_dir, get_project_dir};
+use crate::core::project::{get_docker_container_name, get_project_docker_prefix};
 use crate::core::shell::{code_command, run_command};
 use crate::core::state::ProjectState;
 use anyhow::Result;
@@ -20,17 +21,13 @@ impl Action for OpenCmd {
             Command::new("docker-compose")
                 .current_dir(&project_dir)
                 .arg("-p")
-                .arg(format!("hocus_{}", &self.name))
+                .arg(get_project_docker_prefix(&self.name))
                 .arg("up")
                 .arg("--build")
                 .arg("-d"),
         )?;
 
-        let container_name = format!(
-            "hocus_{project}_{service}_1",
-            project = &self.name,
-            service = project_config.mount_service
-        );
+        let container_name = get_docker_container_name(&self.name, &project_config.mount_service);
 
         let mut project_state = ProjectState::open(&generated_dir)?;
         if !project_state.is_init {

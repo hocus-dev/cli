@@ -1,6 +1,7 @@
 use super::Action;
 use crate::cmd::close::CloseCmd;
 use crate::core::dir::get_project_dir;
+use crate::core::project::get_project_docker_prefix;
 use crate::core::shell::run_command;
 use anyhow::Result;
 use std::process::Command;
@@ -14,7 +15,7 @@ impl Action for CloseCmd {
             Command::new("docker-compose")
                 .current_dir(&project_dir)
                 .arg("-p")
-                .arg(format!("hocus_{}", &self.name))
+                .arg(get_project_docker_prefix(&self.name))
                 .arg("down"),
         )?;
 

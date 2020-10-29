@@ -1,7 +1,8 @@
 use anyhow::{anyhow, Result};
 use std::fs::File;
-use std::io::Read;
-use std::process::Command;
+use std::io;
+use std::io::{Read, Write};
+use std::process::{Command, Output};
 
 fn is_running_on_wsl() -> bool {
     let check_os_version = || -> Result<bool> {
@@ -32,6 +33,17 @@ pub fn run_command(cmd: &mut Command) -> Result<()> {
     if cmd.status()?.success() {
         Ok(())
     } else {
+        Err(anyhow!("failed to execute a shell command"))
+    }
+}
+
+pub fn run_command_and_get_output(cmd: &mut Command) -> Result<Output> {
+    let output = cmd.output()?;
+    if output.status.success() {
+        Ok(output)
+    } else {
+        io::stdout().write_all(&output.stdout)?;
+        io::stderr().write_all(&output.stderr)?;
         Err(anyhow!("failed to execute a shell command"))
     }
 }

@@ -65,6 +65,8 @@ impl Action for OpenCmd {
             container = hex::encode(container_json),
             dir = project_config.mount_dir,
         );
+        // We use native_code_command here because on WSL this URI will work correctly only on the
+        // Windows code command, not the Linux one
         run_command(native_code_command().arg("--folder-uri").arg(uri))?;
 
         Ok(())

@@ -5,8 +5,8 @@ use crate::core::dir::{get_generated_dir, get_project_dir};
 use crate::core::project::{get_docker_container_name, get_project_docker_prefix};
 use crate::core::shell::{native_code_command, run_command};
 use crate::core::state::ProjectState;
-use anyhow::Result;
-use std::fs;
+use anyhow::{Context, Result};
+use fs_extra::dir;
 use std::process::Command;
 
 impl Action for OpenCmd {
@@ -15,6 +15,15 @@ impl Action for OpenCmd {
         let generated_dir = get_generated_dir(&project_dir);
 
         let project_config = ProjectConfig::open(&project_dir)?;
+        let mut project_state = ProjectState::open(&generated_dir)?;
+
+        if !project_state.is_init {
+            println!("Generating the user folder from user_template");
+            let mut options = dir::CopyOptions::new();
+            options.copy_inside = true;
+            dir::copy(project_dir.join("user_template"), &generated_dir, &options)
+                .context("failed to generate the user folder")?;
+        };
 
         println!("Starting the Docker environment...");
         run_command(
@@ -29,11 +38,7 @@ impl Action for OpenCmd {
 
         let container_name = get_docker_container_name(&self.name, &project_config.mount_service);
 
-        let mut project_state = ProjectState::open(&generated_dir)?;
         if !project_state.is_init {
-            println!("Creating the .env file using template.env...");
-            fs::copy(project_dir.join("template.env"), generated_dir.join(".env"))?;
-
             println!("Running the init.sh script...");
             run_command(
                 Command::new("docker")

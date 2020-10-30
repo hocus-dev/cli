@@ -2,7 +2,7 @@ use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
 
 const HOCUS_DIR_NAME: &str = ".hocus";
-const GENERATED_DIR_NAME: &str = ".generated";
+const GENERATED_DIR_NAME: &str = "user";
 
 pub fn get_app_dir() -> Result<PathBuf> {
     let dir = dirs::home_dir().ok_or(anyhow!("failed to get the path to the home directory"))?;

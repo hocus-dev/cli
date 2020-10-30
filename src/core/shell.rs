@@ -17,7 +17,7 @@ fn is_running_on_wsl() -> bool {
     }
 }
 
-pub fn code_command() -> Command {
+pub fn native_code_command() -> Command {
     if is_running_on_wsl() {
         // the in-WSL code command does not work like the ones on native Windows, Linux, or macOS,
         // so we use the windows-native one

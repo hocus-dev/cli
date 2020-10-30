@@ -2,6 +2,7 @@ use crate::cmd::{reset::ResetSubCommand, Root, SubCommand};
 use anyhow::Result;
 
 mod close;
+mod delete;
 mod edit;
 mod get;
 mod open;
@@ -17,6 +18,7 @@ pub fn invoke_action(root: Root) -> Result<()> {
         SubCommand::Open(args) => args.run(),
         SubCommand::Close(args) => args.run(),
         SubCommand::Get(args) => args.run(),
+        SubCommand::Delete(args) => args.run(),
         SubCommand::Reset(reset_cmd) => match reset_cmd.subcmd {
             ResetSubCommand::Volumes(args) => args.run(),
         },

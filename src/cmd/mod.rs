@@ -1,6 +1,7 @@
 use clap::Clap;
 
 pub mod close;
+pub mod delete;
 pub mod edit;
 pub mod get;
 pub mod open;
@@ -25,4 +26,6 @@ pub enum SubCommand {
     Get(get::GetCmd),
     /// Resets a project
     Reset(reset::ResetCmd),
+    /// Deletes a project
+    Delete(delete::DeleteCmd),
 }

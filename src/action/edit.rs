@@ -9,7 +9,7 @@ impl Action for EditCmd {
     fn run(&self) -> Result<()> {
         let project_dir = get_project_dir(&self.name)?;
         println!("Opening {} in VSCode...", project_dir.display());
-        run_command(Command::new("code").arg("--folder-uri").arg(project_dir))?;
+        run_command(Command::new("code").arg(project_dir))?;
 
         Ok(())
     }

@@ -5,7 +5,6 @@ pub mod delete;
 pub mod edit;
 pub mod get;
 pub mod open;
-pub mod reset;
 
 #[derive(Clap)]
 #[clap(version = crate_version!(), author = crate_authors!())]
@@ -24,8 +23,6 @@ pub enum SubCommand {
     Close(close::CloseCmd),
     /// Downloads a project
     Get(get::GetCmd),
-    /// Resets a project
-    Reset(reset::ResetCmd),
     /// Deletes a project
     Delete(delete::DeleteCmd),
 }

@@ -1,4 +1,4 @@
-use crate::cmd::{reset::ResetSubCommand, Root, SubCommand};
+use crate::cmd::{Root, SubCommand};
 use anyhow::Result;
 
 mod close;
@@ -6,7 +6,6 @@ mod delete;
 mod edit;
 mod get;
 mod open;
-mod reset;
 
 trait Action {
     fn run(&self) -> Result<()>;
@@ -19,8 +18,5 @@ pub fn invoke_action(root: Root) -> Result<()> {
         SubCommand::Close(args) => args.run(),
         SubCommand::Get(args) => args.run(),
         SubCommand::Delete(args) => args.run(),
-        SubCommand::Reset(reset_cmd) => match reset_cmd.subcmd {
-            ResetSubCommand::Volumes(args) => args.run(),
-        },
     }
 }

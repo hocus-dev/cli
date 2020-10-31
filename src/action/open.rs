@@ -23,6 +23,18 @@ impl Action for OpenCmd {
             options.copy_inside = true;
             dir::copy(project_dir.join("user_template"), &generated_dir, &options)
                 .context("failed to generate the user folder")?;
+
+            run_command(Command::new("git").current_dir(&generated_dir).arg("init"))?;
+            run_command(
+                Command::new("git")
+                    .current_dir(&generated_dir)
+                    .args(&["add", "*"]),
+            )?;
+            run_command(
+                Command::new("git")
+                    .current_dir(&generated_dir)
+                    .args(&["commit", "-m", ":tada:"]),
+            )?;
         };
 
         println!("Starting the Docker environment...");

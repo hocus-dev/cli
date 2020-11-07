@@ -41,6 +41,8 @@ impl Action for OpenCmd {
         run_command(
             Command::new("docker-compose")
                 .current_dir(&project_dir)
+                .env("COMPOSE_DOCKER_CLI_BUILD", "1") // helps with caching
+                .env("DOCKER_BUILDKIT", "1") // helps with caching
                 .arg("-p")
                 .arg(get_project_docker_prefix(&self.name))
                 .arg("up")

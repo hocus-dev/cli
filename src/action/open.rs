@@ -78,7 +78,7 @@ impl Action for OpenCmd {
 
         println!("Opening the project in VSCode...");
         let container_json = format!(
-            "{{\"containerName\":\"/{container_name}\"}}",
+            "{{\"containerName\":\"{container_name}\"}}",
             container_name = &container_name,
         );
         // URI format taken from:

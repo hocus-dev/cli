@@ -1,5 +1,5 @@
 use crate::core::dir::get_project_dir;
-use crate::core::shell::run_command_and_get_output;
+use crate::core::shell::{get_first_line, run_command_and_get_output};
 use anyhow::{anyhow, Context, Result};
 use std::process::Command;
 
@@ -16,11 +16,20 @@ pub fn get_docker_container_name(project_name: &str, service_name: &str) -> Resu
             .current_dir(&project_dir)
             .args(&["-p", &project_prefix, "ps", "-q", service_name]),
     )
-    .context("failed to query for container name")?;
+    .context("failed to query for container id")?;
     let stdout = String::from_utf8(output.stdout)?;
-    let container_name = stdout
-        .lines()
-        .find(|l| l.len() > 0)
+    let container_id =
+        get_first_line(&stdout).ok_or(anyhow!("failed to find a container id in '{}'", &stdout))?;
+
+    let output = run_command_and_get_output(Command::new("docker").args(&[
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        container_id,
+    ]))
+    .context("failed to query for container id")?;
+    let stdout = String::from_utf8(output.stdout)?;
+    let container_name = get_first_line(&stdout)
         .ok_or(anyhow!("failed to find a container name in '{}'", &stdout))?;
 
     Ok(container_name.to_string())

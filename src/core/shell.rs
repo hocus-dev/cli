@@ -47,3 +47,7 @@ pub fn run_command_and_get_output(cmd: &mut Command) -> Result<Output> {
         Err(anyhow!("failed to execute a shell command"))
     }
 }
+
+pub fn get_first_line<'a>(text: &'a str) -> Option<&'a str> {
+    text.lines().find(|l| l.len() > 0)
+}

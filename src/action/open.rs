@@ -7,6 +7,7 @@ use crate::core::shell::{native_code_command, run_command};
 use crate::core::state::ProjectState;
 use anyhow::{Context, Result};
 use fs_extra::dir;
+use std::fs::remove_dir_all;
 use std::process::Command;
 
 impl Action for OpenCmd {
@@ -19,6 +20,9 @@ impl Action for OpenCmd {
 
         if !project_state.is_init {
             println!("Generating the user folder from user_template");
+            if generated_dir.exists() {
+                remove_dir_all(&generated_dir)?;
+            }
             let mut options = dir::CopyOptions::new();
             options.copy_inside = true;
             dir::copy(project_dir.join("user_template"), &generated_dir, &options)

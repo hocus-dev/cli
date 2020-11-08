@@ -50,7 +50,7 @@ impl Action for OpenCmd {
                 .arg("-d"),
         )?;
 
-        let container_name = get_docker_container_name(&self.name, &project_config.mount_service);
+        let container_name = get_docker_container_name(&self.name, &project_config.mount_service)?;
 
         if !project_state.is_init {
             println!("Running the init.sh script...");

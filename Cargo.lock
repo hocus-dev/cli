@@ -378,10 +378,12 @@ dependencies = [
  "dirs",
  "fs_extra",
  "hex",
+ "lazy_static",
  "reqwest",
  "serde",
  "serde_yaml",
  "sys-info",
+ "uuid",
 ]
 
 [[package]]
@@ -1250,6 +1252,15 @@ dependencies = [
  "idna",
  "matches",
  "percent-encoding",
+]
+
+[[package]]
+name = "uuid"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fde2f6a4bea1d6e007c4ad38c6839fa71cbb63b6dbf5b595aa38dc9b1093c11"
+dependencies = [
+ "rand",
 ]
 
 [[package]]

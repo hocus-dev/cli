@@ -1,7 +1,44 @@
+use crate::core::dir;
 use anyhow::{anyhow, Context, Result};
+use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
+use uuid::Uuid;
+
+static HOCUS_CONFIG_FILENAME: &str = "config.yml";
+
+lazy_static! {
+    pub static ref HOCUS_CONFIG: HocusConfig =
+        HocusConfig::load().expect("failed to load the hocus config");
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct HocusConfig {
+    pub analytics_enabled: bool,
+    pub analytics_uuid: String,
+}
+
+impl HocusConfig {
+    fn load() -> Result<HocusConfig> {
+        let app_dir = dir::get_app_dir()?;
+        let config_path = app_dir.join(HOCUS_CONFIG_FILENAME);
+        if config_path.exists() {
+            let config_str = fs::read_to_string(config_path)?;
+            serde_yaml::from_str(&config_str).context("failed to parse the Hocus config file")
+        } else {
+            let config = HocusConfig {
+                analytics_enabled: true,
+                analytics_uuid: Uuid::new_v4().to_string(),
+            };
+
+            let config_str = serde_yaml::to_string(&config)?;
+            fs::write(config_path, config_str).context("failed to save the Hocus config file")?;
+
+            Ok(config)
+        }
+    }
+}
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ProjectConfig {

@@ -1,6 +1,7 @@
 use crate::cmd::{Root, SubCommand};
 use anyhow::Result;
 
+mod analytics;
 mod close;
 mod delete;
 mod edit;
@@ -18,5 +19,6 @@ pub fn invoke_action(root: Root) -> Result<()> {
         SubCommand::Close(args) => args.run(),
         SubCommand::Get(args) => args.run(),
         SubCommand::Delete(args) => args.run(),
+        SubCommand::Analytics(args) => args.run(),
     }
 }

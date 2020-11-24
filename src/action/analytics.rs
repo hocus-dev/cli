@@ -2,6 +2,7 @@ use super::Action;
 use crate::cmd::analytics::AnalyticsCmd;
 use crate::core::storage::STORAGE;
 use anyhow::Result;
+use std::time::SystemTime;
 
 impl Action for AnalyticsCmd {
     fn run(&self) -> Result<()> {
@@ -21,6 +22,8 @@ fn send_analytics_tick() -> Result<()> {
     let os_release = sys_info::os_release().unwrap_or("unknown".to_string());
     let os_info = format!("{}-{}", os_type, os_release);
 
+    let mut storage = STORAGE.lock().unwrap();
+
     // Reference:
     // https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide
     // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
@@ -28,7 +31,7 @@ fn send_analytics_tick() -> Result<()> {
         ("v", "1"),
         ("t", "event"),
         ("tid", "UA-111652152-3"),
-        ("cid", &STORAGE.lock().unwrap().analytics_uuid),
+        ("cid", &storage.analytics_uuid),
         ("aip", "1"),
         ("ds", "app"),
         ("an", "Hocus CLI"),
@@ -42,6 +45,9 @@ fn send_analytics_tick() -> Result<()> {
         .post("https://www.google-analytics.com/collect")
         .form(&params)
         .send()?;
+
+    storage.last_analytics_tick = SystemTime::now();
+    storage.save()?;
 
     Ok(())
 }

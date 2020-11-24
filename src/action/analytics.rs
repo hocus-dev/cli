@@ -1,6 +1,6 @@
 use super::Action;
 use crate::cmd::analytics::AnalyticsCmd;
-use crate::core::config::HOCUS_CONFIG;
+use crate::core::storage::STORAGE;
 use anyhow::Result;
 
 impl Action for AnalyticsCmd {
@@ -18,7 +18,7 @@ impl Action for AnalyticsCmd {
             ("v", "1"),
             ("t", "event"),
             ("tid", "UA-111652152-3"),
-            ("cid", &HOCUS_CONFIG.analytics_uuid),
+            ("cid", &STORAGE.lock().unwrap().analytics_uuid),
             ("aip", "1"),
             ("ds", "app"),
             ("an", "Hocus CLI"),

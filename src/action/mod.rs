@@ -1,4 +1,5 @@
 use crate::cmd::{Root, SubCommand};
+use crate::core::analytics::spawn_analytics_process;
 use anyhow::Result;
 
 mod analytics;
@@ -13,6 +14,12 @@ trait Action {
 }
 
 pub fn invoke_action(root: Root) -> Result<()> {
+    // we don't want a fork bomb, don't we?
+    match root.subcmd {
+        SubCommand::Analytics(_) => (),
+        _ => spawn_analytics_process(),
+    }
+
     match root.subcmd {
         SubCommand::Edit(args) => args.run(),
         SubCommand::Open(args) => args.run(),

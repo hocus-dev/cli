@@ -9,6 +9,7 @@ mod core;
 use crate::action::invoke_action;
 use crate::cmd::Root;
 use crate::core::init::init;
+use crate::core::logging::init_logging;
 use clap::Clap;
 
 fn main() {
@@ -16,6 +17,8 @@ fn main() {
         eprintln!("Error: {:?}", err);
         std::process::exit(1);
     }
+
+    init_logging().unwrap();
 
     let root = Root::parse();
 
